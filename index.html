@@ -389,6 +389,9 @@ nav .sh{display:none}
 .okt{display:flex;align-items:center;gap:5px;color:#9ccfc9;font-size:12.5px}
 .lic{font-size:10.5px;padding:1px 8px;border-radius:10px;border:1px solid}
 .lic.free{color:#9ccfc9;border-color:#2f5a56}.lic.by{color:#e7c27a;border-color:#6b5426}
+.agrp{display:flex;align-items:center;gap:10px;margin:14px 0 2px;font:600 15px var(--serif);color:var(--parch2)}.agrp:first-child{margin-top:0}.agrp .grow{border-bottom:1px solid var(--ln);height:1px}
+.chip.on{background:var(--parch);color:var(--inkd,#1e1812);border-color:var(--parch)}
+.anote{font-size:12.5px;color:var(--ink2);background:var(--s2);border:1px solid var(--ln);border-radius:10px;padding:9px 12px;line-height:1.5}
 .credits{display:grid;gap:6px;font-size:12.5px;color:var(--ink2);max-height:220px;overflow:auto}
 .warnc{border-color:#4a3a1e}
 @media (max-width:860px){
@@ -434,6 +437,7 @@ aside.col{position:sticky;top:56px;height:calc(100dvh - 56px);overflow-y:auto;ov
 </header>
 <div id="view"></div>
 <div id="toast"></div>
+<script src="acervo.js"></script>
 <script>
 const TV_HTML = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Mesa Virtual · TV</title><style>
 html,body{margin:0;height:100%;background:#000;overflow:hidden;cursor:none;touch-action:manipulation;-webkit-user-select:none;user-select:none}
@@ -697,7 +701,7 @@ function keyBtn(get, set) {
    ========================================================= */
 const VOL_OK = (() => { try { const a = new Audio(); a.volume = .5; return a.volume === .5; } catch (x) { return true; } })();
 let AC = null;
-function wire(e) { if (VOL_OK || e._g) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const s = AC.createMediaElementSource(e), g = AC.createGain(); s.connect(g).connect(AC.destination); e._g = g; } catch (x) { } }
+function wire(e) { if (VOL_OK || e._g || e._raw) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const s = AC.createMediaElementSource(e), g = AC.createGain(); s.connect(g).connect(AC.destination); e._g = g; } catch (x) { } }
 const getV = e => e._g ? e._g.gain.value : e.volume;
 function setV(e, v) { wire(e); if (e._g) e._g.gain.value = v; else e.volume = v; }
 document.addEventListener('pointerdown', () => { if (AC && AC.state === 'suspended') AC.resume(); }, { passive: true, capture: true });
@@ -711,8 +715,9 @@ const Music = {
   play(i) {
     if (!this.bank.length) return; this.idx = (i + this.bank.length) % this.bank.length;
     const m = MEDIA.get(this.bank[this.idx]); if (!m) { toast('Música não encontrada na biblioteca'); return; }
-    const old = this.a, n = this.els[0] === old ? this.els[1] : this.els[0];
-    clearInterval(n._iv); n._adv = false; n.src = m.url; n.currentTime = 0; setV(n, 0);
+    const old = this.a; let n = this.els[0] === old ? this.els[1] : this.els[0];
+    if (m.remote && n._g) { n.pause(); const k = this.els.indexOf(n), f = new Audio(); this.els[k] = f; n = f; }
+    n._raw = !!m.remote; clearInterval(n._iv); n._adv = false; n.src = m.url; n.currentTime = 0; setV(n, 0);
     n.play().catch(() => toast('Clique em qualquer lugar da página para liberar o áudio'));
     fadeVol(n, this.vol(), P.settings.xf);
     if (old && old !== n) { old._adv = true; fadeVol(old, 0, P.settings.xf, () => old.pause()); }
@@ -736,17 +741,17 @@ const Sfx = {
     if (s.loop) {
       const ex = this.loops.get(s.id);
       if (ex) { this.loops.delete(s.id); fadeVol(ex, 0, 1.5, () => ex.pause()); }
-      else { const a = new Audio(m.url); a.loop = true; setV(a, 0); a.play(); fadeVol(a, v, 1.5); this.loops.set(s.id, a); }
+      else { const a = new Audio(m.url); a._raw = !!m.remote; a.loop = true; setV(a, 0); a.play(); fadeVol(a, v, 1.5); this.loops.set(s.id, a); }
       refreshPads();
     } else {
-      const a = new Audio(m.url); setV(a, v); a.play(); this.shots.add(a); a.onended = () => this.shots.delete(a);
+      const a = new Audio(m.url); a._raw = !!m.remote; setV(a, v); a.play(); this.shots.add(a); a.onended = () => this.shots.delete(a);
       const p = document.getElementById('pad-' + s.id); if (p) { p.classList.remove('hit'); void p.offsetWidth; p.classList.add('hit'); }
     }
   },
   stopAll() { for (const a of this.loops.values()) fadeVol(a, 0, 1, () => a.pause()); this.loops.clear(); for (const a of this.shots) fadeVol(a, 0, .5, () => a.pause()); this.shots.clear(); refreshPads(); }
 };
 let prevAudio = null;
-function preview(id) { if (prevAudio) { prevAudio.pause(); if (prevAudio._id === id) { prevAudio = null; return; } } const m = MEDIA.get(id); if (!m) return; prevAudio = new Audio(m.url); prevAudio._id = id; setV(prevAudio, .6); prevAudio.play(); }
+function preview(id) { if (prevAudio) { prevAudio.pause(); if (prevAudio._id === id) { prevAudio = null; return; } } const m = MEDIA.get(id); if (!m) return; prevAudio = new Audio(m.url); prevAudio._raw = !!m.remote; prevAudio._id = id; setV(prevAudio, .6); prevAudio.play(); }
 
 /* =========================================================
    TV + ESTADO AO VIVO
@@ -887,6 +892,7 @@ const IC = {
   upload: '<path d="M12 15V3M7 8l5-5 5 5"/><path d="M3 15v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/>',
   download: '<path d="M12 3v12M7 10l5 5 5-5"/><path d="M3 15v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+  chest: '<path d="M4 10a8 5 0 0 1 16 0v9H4z"/><path d="M4 12h16"/><rect x="10" y="10.5" width="4" height="4" rx="1"/>',
   keyboard: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
   branch: '<circle cx="6" cy="5" r="2.2"/><circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="8" r="2.2"/><path d="M6 7.2v9.6M18 10.2c0 4-6 3-11 7"/>',
   book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
@@ -1017,7 +1023,7 @@ function renderLive() {
         el('div', { class: 'step' }, el('span', { class: 'num' }, '2'), el('div', {}, el('b', {}, 'Mestre por aqui. '), 'Suas anotações, a música e os sons ficam nesta tela. Os jogadores só veem a TV.')),
         el('div', { class: 'step' }, el('span', { class: 'num' }, '3'), el('div', {}, el('b', {}, 'Comece. '), 'Clique numa parte do roteiro ou aperte ', kb(K.next), '.'))),
       el('div', { class: 'transport', style: { justifyContent: 'center' } }, btn('tv', tvOpen() ? 'TV no ar' : 'Abrir TV', tvMenu, 'lg'), btn('play', 'Começar do início', next, 'lg primary')),
-      [...MEDIA.values()].some(m => isT(m, 'audio')) ? null : el('div', { class: 'step', style: { marginTop: '18px', textAlign: 'left' } }, I('music', 20), el('div', { class: 'grow' }, el('b', {}, 'Ainda sem músicas? '), 'Busque gravações reais e gratuitas de chuva, taverna, batalha e muito mais.'), btn('search', 'Buscar sons', () => searchSounds({ pads: true }), 'sm'))));
+      [...MEDIA.values()].some(m => isT(m, 'audio')) ? null : el('div', { class: 'step', style: { marginTop: '18px', textAlign: 'left' } }, I('music', 20), el('div', { class: 'grow' }, el('b', {}, 'Ainda sem músicas? '), 'Abra o acervo: efeitos reais do Freesound e ambientes musicais do Tabletop Audio, gratuitos.'), btn('chest', 'Abrir o acervo', () => openAcervo({ tab: 'mus' }), 'sm'))));
   } else {
     const { sc, sl, pi } = f;
     let nxText, nxIcon = 'arrow';
@@ -1066,7 +1072,7 @@ function nowPlaying() {
 function sidePanel() {
   const box = el('div', { id: 'sidepanel' });
   if (live.tab === 'sons') {
-    if (!P.sounds.length) add(box, el('div', { class: 'empty' }, 'Nenhum som cadastrado.', el('br'), btn('search', 'Buscar sons reais', () => searchSounds({ pads: true, onAdd: () => refreshSide() }), 'sm'), ' ', btn('plus', 'Do computador', () => { mesaTab = 'sons'; setView('mesa'); }, 'sm')));
+    if (!P.sounds.length) add(box, el('div', { class: 'empty' }, 'Nenhum som cadastrado.', el('br'), btn('chest', 'Acervo de sons', () => openAcervo({ tab: 'fx', onClose: () => refreshSide() }), 'sm'), ' ', btn('search', 'Buscar', () => searchSounds({ pads: true, onAdd: () => refreshSide() }), 'sm'), ' ', btn('plus', 'Do computador', () => { mesaTab = 'sons'; setView('mesa'); }, 'sm')));
     else add(box, el('div', { class: 'sph' }, el('span', { class: 'grow' }, 'Clique ou use a tecla'), btn('stop', 'Parar todos', () => Sfx.stopAll(), 'sm', 'Parar todos (' + pk(P.keys.stopSfx) + ')')),
       el('div', { class: 'pads' }, P.sounds.map(s => el('button', { class: 'pad' + (Sfx.loops.has(s.id) ? ' on' : ''), id: 'pad-' + s.id, onclick: () => Sfx.trigger(s), title: s.loop ? 'Loop: aperte de novo para desligar' : 'Toca uma vez' },
         s.loop ? el('span', { class: 'lp' }, I('repeat', 13)) : null, el('span', {}, s.name || 'Som'), kb(s.key)))),
@@ -1197,7 +1203,8 @@ function renderMesa() {
         ibtn('trash', () => { const lp = Sfx.loops.get(s.id); if (lp) { lp.pause(); Sfx.loops.delete(s.id); } P.sounds.splice(i, 1); save(); R(); }, 'Apagar', 'del')))),
       P.sounds.length ? null : el('div', { class: 'empty', style: { marginBottom: '12px' } }, 'Nenhum som ainda. Busque gravações reais gratuitas ou envie arquivos do seu computador.'),
       el('div', { style: { display: 'flex', gap: '8px' } },
-        btn('search', 'Buscar sons reais', () => searchSounds({ pads: true, onAdd: () => R() }), 'primary'),
+        btn('chest', 'Acervo de sons', () => openAcervo({ tab: 'fx', onClose: () => R() }), 'primary'),
+        btn('search', 'Buscar sons reais', () => searchSounds({ pads: true, onAdd: () => R() })),
         btn('upload', 'Enviar do computador', () => { const f = el('input', { type: 'file', multiple: true, accept: 'audio/*', onchange: ev => uploadAsPads(ev.target.files) }); f.click(); }),
         btn('plus', 'Da biblioteca', () => picker(['audio'], true, ids => { ids.forEach(id => P.sounds.push({ id: uid(), name: MEDIA.get(id).name, media: id, key: '', loop: false, vol: 1 })); save(); R(); })),
         btn('plus', 'Som vazio', () => { P.sounds.push({ id: uid(), name: 'Novo som', media: '', key: '', loop: false, vol: 1 }); save(); R(); })));
@@ -1244,7 +1251,7 @@ function renderLib() {
   add(w, el('div', { class: 'phead' }, el('h1', {}, 'Biblioteca'), st, btn('folder', 'Enviar pasta', () => upd.click()), btn('upload', 'Enviar arquivos', () => up.click(), 'primary')), up, upd,
     el('p', { class: 'lead' }, 'Imagens, músicas, sons e vídeos ficam guardados neste navegador. Não precisa abrir as pastas de novo a cada sessão.'),
     oldPackCard(),
-    el('div', { class: 'libtop' }, findCard(), sourcesCard()),
+    el('div', { class: 'libtop' }, acervoCard(), findCard()), sourcesCard(),
     el('div', { class: 'drop', onclick: () => up.click() }, I('upload', 20), 'Arraste arquivos ou pastas inteiras para qualquer lugar desta janela'),
     el('div', { class: 'seg', style: { maxWidth: '520px' } }, [['all', 'Tudo'], ['image', 'Imagens'], ['audio', 'Áudios'], ['video', 'Vídeos']].map(([k, l]) => el('button', { class: libF === k ? 'on' : '', onclick: () => { libF = k; renderLib(); } }, l + ' (' + cnt(k) + ')'))),
     items.length ? el('div', { class: 'lgrid' }, items.map(m => el('div', { class: 'lcard' }, thumb(m, m.type === 'image/png'),
@@ -1581,8 +1588,93 @@ async function addRemote(x, makePad) {
   try { const r = await fetch(x.url, { mode: 'cors' }); if (!r.ok) throw 0; const blob = await r.blob(); if (!blob.size) throw 0; rec = { id: uid(), name, type: blob.type && /^audio\//.test(blob.type) ? blob.type : 'audio/mpeg', size: blob.size, blob, added: Date.now(), credit, src: x.foreign_landing_url || '' }; MEDIA.set(rec.id, { ...rec, url: URL.createObjectURL(blob) }); }
   catch (e) { rec = { id: uid(), name, type: 'audio/mpeg', size: 0, remote: x.url, added: Date.now(), credit, src: x.foreign_landing_url || '' }; MEDIA.set(rec.id, { ...rec, url: x.url }); }
   await DB.put('media', rec);
-  if (makePad) P.sounds.push({ id: uid(), name, media: rec.id, key: '', loop: (x.duration || 0) > 20000, vol: 1 });
+  if (makePad) P.sounds.push({ id: uid(), name, media: rec.id, key: '', loop: x.loop != null ? !!x.loop : (x.duration || 0) > 20000, vol: 1 });
   save(); Sync.schedule(); return rec;
+}
+
+/* =========================================================
+   ACERVO: efeitos do Freesound (CC0) e ambientes do Tabletop Audio
+   ========================================================= */
+const acHas = it => { for (const m of MEDIA.values()) if (m.remote === it.url || (it.source === 'Freesound' && m.src === it.page)) return m; return null; };
+const acToX = it => it.source === 'Freesound'
+  ? { url: it.url, title: it.name, license: 'cc0', creator: 'Freesound', duration: it.dur * 1000, foreign_landing_url: it.page, loop: it.loop }
+  : { url: it.url, title: it.name, license: 'by-nc-nd', attribution: it.credit, creator: 'Tabletop Audio', duration: 600000, foreign_landing_url: it.page, loop: true };
+let acPrev = null;
+function acStopPrev() { if (acPrev) { acPrev.pause(); if (acPrev._btn) acPrev._btn.replaceChildren(I('play', 16)); acPrev = null; } }
+function openAcervo(o = {}) {
+  closePop();
+  const A = window.ACERVO; if (!A) { toast('O acervo não carregou. Recarregue a página.'); return; }
+  let tab = o.tab || 'fx', cat = o.cat || 'all', gen = 'all', q = '', lim = 60;
+  const ov = el('div', { class: 'modal-bg', onclick: e => { if (e.target === ov) close(); } });
+  const close = () => { acStopPrev(); ov.remove(); document.removeEventListener('keydown', esc, true); if (o.onClose) o.onClose(); };
+  const esc = e => { if (e.code === 'Escape') { e.stopPropagation(); close(); } };
+  document.addEventListener('keydown', esc, true);
+  const input = el('input', { type: 'text', placeholder: 'Filtrar: chuva, espada, tavern, forest...', oninput: () => { q = input.value.trim().toLowerCase(); lim = 60; draw(); } });
+  const segT = el('div'), chips = el('div', { class: 'chips' }), chips2 = el('div', { class: 'chips' }), note = el('div'), list = el('div', { class: 'slist' }), st = el('div', { class: 'hint', style: { marginTop: 0 } });
+  const playBtn = it => { const b = ibtn('play', () => {
+    if (acPrev && acPrev._id === it.id) { acStopPrev(); return; } acStopPrev();
+    acPrev = new Audio(it.url); acPrev._id = it.id; acPrev._btn = b; acPrev.volume = .8;
+    acPrev.play().catch(() => toast('Não consegui tocar. Confira a internet.')); b.replaceChildren(I('pause', 16)); acPrev.onended = () => b.replaceChildren(I('play', 16));
+  }, 'Ouvir', 'round'); return b; };
+  const words = s => s.split(/\s+/).filter(Boolean);
+  const match = (it, extra) => { const t = (it.name + ' ' + (it.orig || '') + ' ' + (it.group || '') + ' ' + (it.tags || '')).toLowerCase(); const qs = words(q); const ex = extra ? words(extra) : []; return qs.every(w => t.includes(w)) && (!ex.length || ex.some(w => t.includes(w))); };
+  let quick = '';
+  async function addOne(it, pad, acts) {
+    if (acts) acts.replaceChildren(el('span', { class: 'muted' }, it.source === 'Freesound' ? 'Baixando...' : 'Adicionando...'));
+    let m = acHas(it); if (!m) m = await addRemote(acToX(it), false);
+    if (pad && !P.sounds.some(s => s.media === m.id)) { P.sounds.push({ id: uid(), name: it.name, media: m.id, key: '', loop: !!it.loop, vol: 1 }); save(); }
+    if (o.onAdd) o.onAdd(m); return m;
+  }
+  function row(it) {
+    const acts = el('div', { class: 'sacts' });
+    const paint = () => { const m = acHas(it); const isPad = m && P.sounds.some(s => s.media === m.id);
+      acts.replaceChildren(...[
+        m ? el('span', { class: 'okt' }, I('check', 14), isPad ? 'É botão' : 'Na biblioteca') : btn('plus', 'Biblioteca', async () => { await addOne(it, false, acts); paint(); }, 'sm'),
+        isPad ? null : btn('volume', 'Botão de som', async () => { await addOne(it, true, acts); paint(); toast('"' + it.name + '" virou botão de som'); }, 'sm')].filter(Boolean)); };
+    paint();
+    const isFs = it.source === 'Freesound';
+    const meta = isFs
+      ? [el('span', { class: 'lic free' }, 'Livre'), [it.orig, fmt(it.dur), it.loop ? 'loop' : ''].filter(Boolean).join('  ·  ')]
+      : [el('span', { class: 'lic by' }, 'Exige crédito'), [it.genres.split('').map(g => (A.GENRES.find(x => x[0] === g) || [, ''])[1]).filter(Boolean).join(', '), it.type === 'musica' ? 'só música' : it.type === 'ambiente' ? 'só ambiente' : 'ambiente e música', '10 min', 'toca online'].filter(Boolean).join('  ·  ')];
+    return el('div', { class: 'srow' }, playBtn(it), el('div', { class: 'grow' }, el('div', { class: 'stt' }, it.name), el('div', { class: 'meta' }, ...meta)), acts,
+      isFs ? null : el('a', { class: 'ibtn', href: it.url, target: '_blank', rel: 'noopener', title: 'Abrir o MP3 para baixar e usar sem internet', 'aria-label': 'Baixar MP3' }, I('download', 16)));
+  }
+  function draw() {
+    segT.replaceChildren(segc(tab, [['fx', 'Efeitos sonoros (' + A.fx.length + ')'], ['mus', 'Músicas de ambiente (' + A.mus.length + ')']], k => { tab = k; cat = 'all'; gen = 'all'; quick = ''; lim = 60; acStopPrev(); draw(); }));
+    list.replaceChildren();
+    if (tab === 'fx') {
+      chips.replaceChildren(...[['all', 'Todos'], ...A.FX_CATS].map(([k, l]) => el('button', { class: 'chip' + (cat === k ? ' on' : ''), onclick: () => { cat = k; draw(); } }, l)));
+      chips2.replaceChildren(); note.replaceChildren(el('div', { class: 'anote' }, 'Gravações reais do Freesound com licença livre (CC0): não precisam de crédito. Ao adicionar, o arquivo é baixado e passa a funcionar sem internet.'));
+      const items = A.fx.filter(it => (cat === 'all' || it.cat === cat) && match(it));
+      const groups = new Map(); items.forEach(it => { if (!groups.has(it.group)) groups.set(it.group, []); groups.get(it.group).push(it); });
+      st.textContent = items.length ? items.length + ' sons' : 'Nada encontrado com esse filtro.';
+      for (const [g, its] of groups) {
+        const missing = its.filter(it => !acHas(it));
+        list.append(el('div', { class: 'agrp' }, el('span', {}, g), el('span', { class: 'grow' }),
+          missing.length > 1 ? btn('volume', 'Todos viram botões', async e => { const b = e.currentTarget; b.disabled = true; b.replaceChildren(el('span', {}, 'Baixando...')); for (const it of its) await addOne(it, true); toast(its.length + ' sons de "' + g + '" viraram botões'); draw(); }, 'sm ghost') : null),
+          ...its.map(row));
+      }
+    } else {
+      chips.replaceChildren(...[['all', 'Todos'], ...A.GENRES].map(([k, l]) => el('button', { class: 'chip' + (gen === k ? ' on' : ''), onclick: () => { gen = k; lim = 60; draw(); } }, l)));
+      chips2.replaceChildren(...A.MUS_QUICK.map(([l, en]) => el('button', { class: 'chip' + (quick === en ? ' on' : ''), onclick: () => { quick = quick === en ? '' : en; lim = 60; draw(); } }, l)));
+      note.replaceChildren(el('div', { class: 'anote' }, 'Ambientes de 10 minutos do Tabletop Audio, feitos para RPG. Uso não comercial, com crédito (fica em Ajustes, Créditos dos sons). O site não deixa baixar direto pelo app, então elas tocam pela internet. Para usar sem internet, toque na seta de baixar, salve o MP3 e arraste para a Biblioteca.'));
+      const items = A.mus.filter(it => (gen === 'all' || it.genres.includes(gen)) && match(it, quick));
+      st.textContent = items.length ? items.length + ' faixas' : 'Nada encontrado com esse filtro.';
+      list.append(...items.slice(0, lim).map(row));
+      if (items.length > lim) list.append(el('div', {}, btn('down', 'Mostrar mais (' + (items.length - lim) + ')', () => { lim += 60; draw(); }, 'sm')));
+    }
+  }
+  ov.append(el('div', { class: 'modal' },
+    el('div', { class: 'mhead' }, el('h3', {}, 'Acervo de sons'), el('span', { class: 'muted', style: { fontSize: '12px' } }, 'Freesound e Tabletop Audio'), ibtn('x', close, 'Fechar (Esc)')),
+    el('div', { class: 'sbody' }, segT, el('div', { class: 'sform' }, I('search', 18), input), chips, chips2, note, st, list)));
+  draw(); document.body.append(ov); if (!matchMedia('(pointer:coarse)').matches) input.focus();
+}
+function acervoCard() {
+  const A = window.ACERVO;
+  return el('section', { class: 'card' }, el('h3', {}, I('chest', 16), 'Acervo de sons'),
+    el('p', { class: 'hint', style: { marginTop: 0 } }, 'Coleção pronta para a mesa: ' + (A ? A.fx.length + ' efeitos do Freesound (livres, sem crédito) e ' + A.mus.length + ' ambientes musicais do Tabletop Audio' : 'efeitos e músicas de ambiente') + '. Ouça antes e adicione com um clique.'),
+    el('div', { class: 'chips', style: { margin: '10px 0' } }, (A ? A.FX_CATS : []).map(([k, l]) => el('button', { class: 'chip', onclick: () => openAcervo({ tab: 'fx', cat: k, onClose: renderLib }) }, l))),
+    el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, btn('volume', 'Efeitos sonoros', () => openAcervo({ tab: 'fx', onClose: renderLib }), 'primary'), btn('music', 'Músicas de ambiente', () => openAcervo({ tab: 'mus', onClose: renderLib }))));
 }
 
 /* ---------- arrastar pastas ---------- */
