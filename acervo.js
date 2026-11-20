@@ -85,7 +85,7 @@
      tipo: M só música, A só ambiente, vazio = ambiente com música */
   const TTA = `534|Apothecary|fi|potions,shop,magic,alchemist
 533|Chillwater Reach|fi|city,town,bridge,river
-532|Exoplanet|sn|space,planet,forest,jungle|532_exoplanet.mp3
+532|Exoplanet|sn|space,planet,forest,jungle
 531|Demon Hunter|hf|dungeon,castle,monster,haunted
 530|Eldritch Wood|hn|cthulhu,forest,gothic,lovecraft
 529|To Catch a Thief|i|chase,london,city,victorian
@@ -147,7 +147,7 @@
 473|Prison Block|im|jail,genpop,prisoners,revolt
 472|Ice Mephit Cavern|fn|snow,cave,ice,action
 471|Prisoner Transport|sm|vehicle,tank,guards,jail
-470|The Threshing Hour|nmh|cornfield,windmill,farm,rural|470_The_Threshing Hour.mp3
+470|The Threshing Hour|nmh|cornfield,windmill,farm,rural
 469|Monsoon Temple|nfi|asian,buddhist,monks,forest
 468|Steampunk Telescope|sf|eberron,observatory,mechanical,machinery
 467|Battle Stations|sm|war,machines,deck,hangar
@@ -160,7 +160,7 @@
 460|Doll Shoppe|fh|mannequins,creepy,victorian,shop
 459|Xenon Refinery|sm|planet,space,outpost,alien
 458|Deep Blue|snm|ocean,sea,underwater,kelp
-457|Hunting Grounds|f|dragons,dragon,drakes,mountains|457_Hunting_grounds.mp3
+457|Hunting Grounds|f|dragons,dragon,drakes,mountains
 456|Drawing Room: Night|i|victorian,parlor,storm,night
 455|Harper's Waypoint|f|tavern,inn,woods,evening
 454|Broken Pantheon|f|temple,dungeon,spirits,ruins
