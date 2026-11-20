@@ -402,6 +402,46 @@ nav .sh{display:none}
   .srow{flex-wrap:wrap}.srow .grow{flex:1 1 60%}.sacts{width:100%;justify-content:flex-end}
 }
 
+/* mapa */
+.mapa{display:grid;grid-template-columns:minmax(0,1fr) 380px;align-items:start}
+.mapmain{position:sticky;top:56px;height:calc(100dvh - 56px);display:flex;flex-direction:column;gap:8px;padding:12px 12px 12px 16px}
+.maptools{display:flex;align-items:center;gap:6px}
+.maptools .mmodes{flex:0 1 auto}.mmodes button{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.mapvp{flex:1;min-height:0;position:relative;overflow:hidden;border:1px solid var(--ln);border-radius:10px;background:#0c0b09;touch-action:none;cursor:crosshair;-webkit-user-select:none;user-select:none}
+.mapvp[data-mode=mover]{cursor:grab}.mapvp[data-mode=lugar]{cursor:copy}
+.mapin{position:absolute;left:0;top:0;transform-origin:0 0}
+.mapin img{display:block;width:100%;height:100%;pointer-events:none}
+.mapov{position:absolute;inset:0;pointer-events:none}.mapov svg{position:absolute;left:0;top:0;overflow:visible}
+.mapnone{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mute)}
+.maphint{font-size:12.5px;color:var(--ink2);min-height:19px}
+.mapside{padding:14px 16px 60px;border-left:1px solid var(--ln);background:var(--s1);min-height:calc(100dvh - 56px)}
+.mcard{padding:14px 16px;margin-bottom:12px}.mcard>h3{margin-bottom:10px;font-size:15px}
+.mrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.mname{font:600 15px var(--serif);color:var(--parch2)}
+.mnote{font-size:12.5px;color:var(--ink2);line-height:1.5;margin:8px 0 0}
+.mwarn{font-size:13px;color:#e7c27a;margin:0}
+.mnote.warnc{color:#e7c27a}
+.mlab{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:12px 0 6px}
+.mbig{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+.mbig b{font:600 30px var(--serif);color:var(--parch2);line-height:1.1}.mbig span{font-size:12.5px;color:var(--ink2)}
+.mtimes{display:grid;gap:4px}
+.mt{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--ln);border-radius:8px;background:#0c0b09}
+.mt .ic{color:var(--parch)}.mt b{font:600 15px var(--serif);color:var(--parch2)}
+.tchip{display:inline-flex;align-items:center;gap:6px}.tchip i{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid #0006}
+.msegs{margin-top:10px;font-size:13px}.msegs summary{cursor:pointer;color:var(--ink2)}
+.mroutes{display:grid;gap:6px}
+.mr{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--ln);border-radius:8px;cursor:pointer;background:#0c0b09}
+.mr:hover{border-color:var(--ln2)}.mr.on{background:var(--parch);border-color:var(--parch)}.mr.on .mrt,.mr.on .mrs{color:var(--inkd)}
+.mrt{font-weight:600;color:var(--parch2)}.mrs{font-size:12px;color:var(--mute)}
+.mchk{display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer}.mchk input{accent-color:var(--parch)}
+@media (max-width:980px){.mapa{grid-template-columns:minmax(0,1fr) 320px}.mmodes span{display:none}}
+@media (max-width:860px){
+  .mapa{display:block}
+  .mapmain{position:static;height:auto;padding:8px}
+  .mapvp{flex:none;height:48dvh}
+  .mmodes span{display:inline;font-size:12px}.mmodes button{padding:6px 5px;gap:4px}.maptools .mmodes{flex:1 1 auto}.maptools .zb{display:none}
+  .mapside{border:0;min-height:0;padding:8px 10px 30px}
+}
 /* ===== rolagem natural: a página inteira rola (dedo, touchpad, roda do mouse) ===== */
 html,body{height:auto;min-height:100%}
 html{overflow-y:auto;-webkit-text-size-adjust:100%}
@@ -463,8 +503,25 @@ video.media{width:100%;height:100%}
 @keyframes gr{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(3%,3%)}}
 .bar{position:absolute;left:0;right:0;height:0;background:#000;pointer-events:none}#bt{top:0}#bb{bottom:0}
 #blackout{background:#000;opacity:0;transition:opacity 1.4s ease;pointer-events:none}
+#mapv{position:absolute;inset:0;background:#0a0908;opacity:0;pointer-events:none;overflow:hidden;transition:opacity 1.2s ease}
+#mapv.on{opacity:1}
+#mapin{position:absolute;left:0;top:0;transform-origin:0 0;transition:transform 2.6s cubic-bezier(.45,0,.2,1);will-change:transform}
+#mapin img{display:block;width:100%;height:100%}
+#mapin svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+.rl{stroke-dasharray:1 1;stroke-dashoffset:1;animation:rdraw var(--d,1s) linear var(--dl,0s) forwards}
+@keyframes rdraw{to{stroke-dashoffset:0}}
+.rp{opacity:0;animation:rpop .6s ease-out var(--dl,0s) forwards}
+@keyframes rpop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}
+.rpulse{transform-box:fill-box;transform-origin:center;animation:rpul 2.2s ease-out infinite}
+@keyframes rpul{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(3.2)}}
+#mcard{position:absolute;left:50%;bottom:6vh;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity 1s;background:linear-gradient(90deg,transparent,rgba(10,9,8,.9) 16%,rgba(10,9,8,.9) 84%,transparent);padding:2.4vh 14vh;white-space:nowrap;pointer-events:none}
+#mcard.on{opacity:1}
+#mcard h3{margin:0;font:500 4.4vh "Alegreya","Vollkorn","Palatino Linotype",Georgia,serif;color:#f4ead6;letter-spacing:.14em;text-transform:uppercase}
+#mcard .ln{width:22vw;height:1px;background:linear-gradient(90deg,transparent,#c9a45c,transparent);margin:1.4vh auto}
+#mcard p{margin:.3vh 0 0;font:italic 400 2.9vh Georgia,serif;color:#e0d0ae;letter-spacing:.06em}
+#mcard p.d{font-style:normal;font-size:2.2vh;letter-spacing:.24em;text-transform:uppercase;color:#bfae8c}
 #hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#e6c886;font:16px/1.6 system-ui,sans-serif;text-align:center;background:rgba(0,0,0,.7);padding:26px 34px;border:1px solid #c9a45c66;border-radius:12px;transition:opacity .6s}
-</style></head><body class="cur"><div id="stage"><div id="layers"></div><canvas id="fx"></canvas><div id="dim"></div><div id="portraits"></div><div id="fade"></div><div id="flash"></div><div id="title"><h1></h1><div class="ln"></div><h2></h2></div><div id="vig"></div><div id="grain"></div><div class="bar" id="bt"></div><div class="bar" id="bb"></div><div id="blackout"></div><div id="hint">Arraste esta janela para a TV<br><b>Dê dois cliques</b> aqui para tela cheia<br><small style="color:#999">Os atalhos funcionam nas duas janelas</small></div></div>
+</style></head><body class="cur"><div id="stage"><div id="layers"></div><canvas id="fx"></canvas><div id="dim"></div><div id="mapv"><div id="mapin"><img alt=""><svg xmlns="http://www.w3.org/2000/svg"></svg></div><div id="mcard"></div></div><div id="portraits"></div><div id="fade"></div><div id="flash"></div><div id="title"><h1></h1><div class="ln"></div><h2></h2></div><div id="vig"></div><div id="grain"></div><div class="bar" id="bt"></div><div class="bar" id="bb"></div><div id="blackout"></div><div id="hint">Arraste esta janela para a TV<br><b>Dê dois cliques</b> aqui para tela cheia<br><small style="color:#999">Os atalhos funcionam nas duas janelas</small></div></div>
 <script>
 const $=i=>document.getElementById(i),L=$('layers'),FX=$('fx'),cx=FX.getContext('2d'),F=$('fade'),FL=$('flash'),urls=new Map();
 let cur=null,tGen=0,tTimer=0,bars=false;
@@ -482,6 +539,7 @@ function flashC(c,T,mid){FL.style.background=c;AF(FL,[{opacity:0},{opacity:.95}]
 function shake(ms){const k=[];for(let i=0;i<10;i++){const a=(10-i)*1.4;k.push({transform:'translate('+(Math.random()*2-1)*a+'px,'+(Math.random()*2-1)*a+'px)'})}k.push({transform:'none'});$('stage').animate(k,{duration:ms})}
 function barsTo(h,T,ease){['bt','bb'].forEach(i=>{const e=$(i),c=getComputedStyle(e).height;e.getAnimations().forEach(a=>a.cancel());e.style.height=c;AF(e,[{height:c},{height:h}],{duration:T,easing:ease||'cubic-bezier(.7,0,.3,1)'})})}
 function show(d){
+ if(typeof mapOff==='function')mapOff();
  const T=Math.max(150,(d.dur||1.8)*1000),old=cur,n=layer(d);[F,FL].forEach(x=>x.getAnimations().forEach(a=>a.cancel()));
  L.appendChild(n);cur=n;hideTitle();$('hint').style.opacity=0;setFX(d.effect||'none');
  let tr=d.instant?'corte':(d.transition||'fade');if(!old&&tr!=='corte'&&tr!=='cinema')tr='fade';
@@ -553,9 +611,43 @@ function setPortraits(list,dim,names){$('dim').style.opacity=dim?.5:0;const ids=
    const from=p.x<40?'-9vw':p.x>60?'9vw':'0px';e.animate([{opacity:0,marginLeft:from,filter:'blur(8px) brightness(0)'},{opacity:1,marginLeft:'0px',filter:'blur(0px) brightness(1)'}],{duration:1200,delay:(k++)*140,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'})}
   else{e.style.left=p.x+'%';e.style.height=h}
   e.querySelector('.nm').style.display=names&&p.name?'':'none';e.style.zIndex=i})}
+/* mapa */
+const MV=$('mapv'),MIN=$('mapin'),MC=$('mcard');let mapD=null,mapT=[];
+function mapCam(){if(!mapD)return;const W=innerWidth,H=innerHeight,w=mapD.w,h=mapD.h,sf=Math.min(W/w,H/h);let s=sf,cx=w/2,cy=h/2,off=0;
+ if(mapD.focus&&mapD.pts.length>1){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;mapD.pts.forEach(p=>{x0=Math.min(x0,p.x);y0=Math.min(y0,p.y);x1=Math.max(x1,p.x);y1=Math.max(y1,p.y)});
+  const bw=Math.max(x1-x0,w*.1),bh=Math.max(y1-y0,h*.1);s=Math.min(W*.7/bw,H*(mapD.card?.56:.7)/bh);s=Math.max(sf,Math.min(s,sf*4));cx=(x0+x1)/2;cy=(y0+y1)/2;if(mapD.card)off=-H*.07}
+ let tx=W/2-cx*s,ty=H/2-cy*s+off;
+ if(w*s>W)tx=Math.min(0,Math.max(W-w*s,tx));else tx=(W-w*s)/2;
+ if(h*s>H)ty=Math.min(0,Math.max(H-h*s,ty));else ty=(H-h*s)/2;
+ MIN.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')'}
+function mapRoute(anim,delay){const d=mapD,sv=MIN.querySelector('svg');sv.setAttribute('viewBox','0 0 '+d.w+' '+d.h);
+ const lw=Math.max(d.w,d.h)/420,L=[];let tot=0,h='',hl='';
+ for(let i=1;i<d.pts.length;i++){const a=d.pts[i-1],b=d.pts[i],l=Math.hypot(b.x-a.x,b.y-a.y);L.push(l);tot+=l}
+ const D=2.6;let acc=0;
+ for(let i=1;i<d.pts.length;i++){const a=d.pts[i-1],b=d.pts[i],wt=d.water[i-1],dd=tot?D*L[i-1]/tot:0,st=anim?'--d:'+dd.toFixed(3)+'s;--dl:'+(delay+acc).toFixed(3)+'s':'',cl=anim?' class="rl"':'';acc+=dd;
+  const ln='x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" pathLength="1" stroke-linecap="round"'+cl+' style="'+st+'"';
+  hl+='<line '+ln+' stroke="#f4ead6" stroke-opacity=".9" stroke-width="'+lw*2.6+'"/>';
+  h+='<line '+ln+' stroke="'+(wt?'#1f5f7a':'#8e1f16')+'" stroke-width="'+lw*1.3+'"/>'}
+ if(d.pts.length>1){const a=d.pts[0],b=d.pts[d.pts.length-1],pa=anim?' class="rp" style="--dl:'+delay+'s"':'',pb=anim?' class="rp" style="--dl:'+(delay+D)+'s"':'';
+  h+='<g'+pa+'><circle cx="'+a.x+'" cy="'+a.y+'" r="'+lw*2.4+'" fill="#f4ead6" stroke="#1e1812" stroke-width="'+lw*.9+'"/></g>';
+  h+='<g'+pb+'><circle class="rpulse" cx="'+b.x+'" cy="'+b.y+'" r="'+lw*2.6+'" fill="none" stroke="#8e1f16" stroke-width="'+lw*.8+'"/><circle cx="'+b.x+'" cy="'+b.y+'" r="'+lw*2.6+'" fill="#8e1f16" stroke="#f4ead6" stroke-width="'+lw*.9+'"/></g>'}
+ sv.innerHTML=hl+h;return D}
+function mapCardSet(c){MC.innerHTML='';MC.classList.remove('on');if(!c)return;const h=document.createElement('h3');h.textContent=c.t;const ln=document.createElement('div');ln.className='ln';MC.append(h,ln);
+ (c.lines||[]).forEach(t=>{const p=document.createElement('p');p.textContent=t;MC.append(p)});if(c.d){const p=document.createElement('p');p.className='d';p.textContent=c.d;MC.append(p)}
+ requestAnimationFrame(()=>MC.classList.add('on'))}
+function mapShow(d){mapT.forEach(clearTimeout);mapT=[];const was=MV.classList.contains('on')&&mapD;mapD=d;d.focus=false;hideTitle();$('hint').style.opacity=0;
+ MIN.style.width=d.w+'px';MIN.style.height=d.h+'px';const im=MIN.querySelector('img');if(d.media)im.src=U(d.media);MC.classList.remove('on');
+ if(!was){MIN.style.transition='none';mapCam();void MIN.offsetWidth;MIN.style.transition=''}
+ MV.classList.add('on');const hasR=d.pts.length>1,cam=hasR?(was?.4:1.3):0;
+ if(hasR){mapT.push(setTimeout(()=>{if(mapD!==d)return;d.focus=true;mapCam()},cam*1000))}else mapCam();
+ const D=mapRoute(hasR,cam+(hasR?2.2:0));
+ if(d.card)mapT.push(setTimeout(()=>{if(mapD===d)mapCardSet(d.card)},(cam+2.2+D*.85)*1000))}
+function mapUpd(c,pts,water){if(!mapD)return;if(pts){mapD.pts=pts;mapD.water=water;mapRoute(false,0)}mapD.card=c;mapCardSet(c);if(mapD.focus)mapCam()}
+function mapOff(){mapT.forEach(clearTimeout);mapT=[];if(!mapD)return;mapD=null;MV.classList.remove('on');MC.classList.remove('on')}
+addEventListener('resize',()=>{if(mapD){MIN.style.transition='none';mapCam();void MIN.offsetWidth;MIN.style.transition=''}});
 /* granulado */
 (()=>{const c=document.createElement('canvas');c.width=c.height=220;const g=c.getContext('2d'),d=g.createImageData(220,220);for(let i=0;i<d.data.length;i+=4){const v=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}g.putImageData(d,0,0);$('grain').style.backgroundImage='url('+c.toDataURL()+')'})();
-window.TV={show,setPortraits,showTitle,hideTitle,setFX,onkey:null,
+window.TV={show,setPortraits,showTitle,hideTitle,setFX,onkey:null,map:mapShow,mapOff,mapCard:mapUpd,
  black:on=>{$('blackout').style.opacity=on?1:0},flash:()=>flashC('#fff',900),shake:()=>shake(650),
  setGrain:on=>{$('grain').style.display=on?'':'none'},setVig:on=>{$('vig').style.display=on?'':'none'}};
 document.addEventListener('keydown',e=>{if(TV.onkey)TV.onkey(e)});
@@ -651,7 +743,8 @@ function save() { dirty = true; clearTimeout(saveT); saveT = setTimeout(persist,
 function migrate(p) {
   p.settings = Object.assign({ ...DEF_SET }, p.settings); p.keys = Object.assign({ ...DEF_KEYS }, p.keys); p.labels = p.labels || {};
   p.scenes = (p.scenes || []).map(s => { s = scene(s); s.slides = s.slides.map(slide); return s; });
-  p.sounds = p.sounds || []; p.portraits = p.portraits || []; p.groups = p.groups || []; return p;
+  p.sounds = p.sounds || []; p.portraits = p.portraits || []; p.groups = p.groups || [];
+  p.maps = p.maps || []; p.travel = Object.assign(JSON.parse(JSON.stringify(DEF_TRAVEL)), p.travel); p.travel.sp = Object.assign({ ...DEF_TRAVEL.sp }, p.travel.sp); return p;
 }
 function flat() { const r = []; P.scenes.forEach((sc, si) => sc.slides.forEach((sl, pi) => r.push({ sc, sl, si, pi }))); return r; }
 const find = id => id ? flat().find(x => x.sl.id === id) : null;
@@ -758,13 +851,14 @@ function preview(id) { if (prevAudio) { prevAudio.pause(); if (prevAudio._id ===
    ========================================================= */
 let tv = null;
 const tvOpen = () => { try { return !!(tv && !tv.closed && tv.TV); } catch (e) { return false; } };
-const live = { id: null, hist: [], black: false, fxOff: false, pt: new Set() };
+const live = { id: null, hist: [], black: false, fxOff: false, pt: new Set(), map: null };
 const cur = () => find(live.id);
 function initTV() {
   tv.TV.onkey = e => handleKey(e, true);
   tv.TV.setGrain(P.settings.grain); tv.TV.setVig(P.settings.vig);
   const f = cur(); if (f) tvShow(f, true);
   ptPush(); if (live.black) tv.TV.black(true);
+  if (live.map) sendMapTV();
   updTvBtn(); if (view === 'live') renderLive();
 }
 setInterval(() => { const o = tvOpen(); if (o !== updTvBtn.last) { updTvBtn(); if (view === 'live') renderLive(); } }, 1000);
@@ -784,7 +878,7 @@ function applyMusic(f) {
 function goTo(id, o = {}) {
   const f = find(id); if (!f) return;
   if (!o.back && live.id && live.id !== id) { live.hist.push(live.id); if (live.hist.length > 200) live.hist.shift(); }
-  live.id = id; if (P.lastId !== id) { P.lastId = id; save(); } tvShow(f, o.instant); applyMusic(f);
+  live.id = id; live.map = null; if (P.lastId !== id) { P.lastId = id; save(); } tvShow(f, o.instant); applyMusic(f);
   if (view === 'live') renderLive();
 }
 function next() {
@@ -904,7 +998,19 @@ const IC = {
   film: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4M3 16h4M17 8h4M17 16h4"/>',
   scroll: '<path d="M8 21h11a2 2 0 0 0 2-2v-1H10v1a2 2 0 1 1-4 0V5a2 2 0 0 0-2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 3a2 2 0 0 0-2 2v2h4"/>',
   tv: '<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
-  quote: '<path d="M7 7h4v4c0 3-1.5 5-4 6M15 7h4v4c0 3-1.5 5-4 6"/>'
+  quote: '<path d="M7 7h4v4c0 3-1.5 5-4 6M15 7h4v4c0 3-1.5 5-4 6"/>',
+  map: '<path d="M3 6.5l6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/>',
+  hand: '<path d="M12 3v18M3 12h18M12 3l-2.5 2.5M12 3l2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12l2.5-2.5M3 12l2.5 2.5M21 12l-2.5-2.5M21 12l-2.5 2.5"/>',
+  route: '<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h8"/>',
+  pin: '<path d="M12 21s-6-6.2-6-11a6 6 0 0 1 12 0c0 4.8-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/>',
+  ruler: '<path d="M3 16.5L16.5 3 21 7.5 7.5 21z"/><path d="M7 12.5l2 2M10 9.5l2 2M13 6.5l2 2"/>',
+  minus: '<path d="M5 12h14"/>',
+  fit: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
+  walk: '<circle cx="13" cy="4.5" r="1.8"/><path d="M10 21l2.5-6 3 3v3M12.5 15l1-5.5-3.5 2-1.5 3.5M13.5 9.5l2.5 3 3 1"/>',
+  horse: '<path d="M7 21v-5c0-3 1.5-5.5 4-7l-3-2.5L9 4l3 2c3.5-.5 6.5 1.5 8 5l.5 3-2 .5-2-2.5-2 1.5V21"/><path d="M12 6l-1-3"/>',
+  cart: '<circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/><path d="M2.5 13h19L20 7H4zM10 17h4M21.5 10H23"/>',
+  wing: '<path d="M2.5 15.5c4.5.3 8.5-1.5 10.5-5.5 1.5-3 3.5-5 8.5-6-1 5.5-3.5 9.5-7.5 11.5-3.5 1.8-7.5 1.8-11.5 0z"/><path d="M7 15.5c3-1 5.5-3 7-6M10.5 16.5c2.5-1 4.5-2.5 6-5"/>'
 };
 function I(n, s = 16) { const e = document.createElement('span'); e.className = 'ic'; e.innerHTML = '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">' + IC[n] + '</svg>'; return e; }
 
@@ -982,9 +1088,9 @@ addEventListener('drop', async e => {
    NAVEGAÇÃO PRINCIPAL
    ========================================================= */
 let view = 'live';
-const VIEWS = [['live', 'Mestrar', 'stage', 'Mestrar'], ['editor', 'Roteiro', 'scroll', 'Roteiro'], ['mesa', 'Sons e Retratos', 'volume', 'Sons'], ['lib', 'Biblioteca', 'folder', 'Arquivos'], ['config', 'Ajustes', 'sliders', 'Ajustes']];
+const VIEWS = [['live', 'Mestrar', 'stage', 'Mestrar'], ['editor', 'Roteiro', 'scroll', 'Roteiro'], ['mapa', 'Mapa', 'map', 'Mapa'], ['mesa', 'Sons e Retratos', 'volume', 'Sons'], ['lib', 'Biblioteca', 'folder', 'Arquivos'], ['config', 'Ajustes', 'sliders', 'Ajustes']];
 function setView(v) { if (v !== view) window.scrollTo(0, 0); view = v; const n = $('#nav'); n.innerHTML = ''; VIEWS.forEach(([k, l, ic, sh]) => n.append(el('button', { class: view === k ? 'on' : '', onclick: () => setView(k) }, I(ic, 18), el('span', { class: 'lg' }, l), el('span', { class: 'sh' }, sh)))); render(); }
-function render() { ({ live: renderLive, editor: renderEditor, mesa: renderMesa, lib: renderLib, config: renderConfig })[view](); }
+function render() { ({ live: renderLive, editor: renderEditor, mesa: renderMesa, mapa: renderMapa, lib: renderLib, config: renderConfig })[view](); }
 const V = () => { const v = $('#view'); v.innerHTML = ''; return v; };
 
 /* =========================================================
@@ -1037,7 +1143,8 @@ function renderLive() {
         tool('sparkle', 'Ambiente', K.fx, !live.fxOff && sl.effect !== 'none', toggleFx),
         tool('zap', 'Relâmpago', K.flash, false, () => tvOpen() && tv.TV.flash()),
         tool('shake', 'Tremor', K.shake, false, () => tvOpen() && tv.TV.shake()),
-        tool('type', 'Título', K.title, false, reTitle))),
+        tool('type', 'Título', K.title, false, reTitle),
+        tool('map', live.map ? 'Tirar mapa' : 'Mapa', '', !!live.map, () => live.map ? mapOffTV() : setView('mapa')))),
       el('div', {},
         el('div', { class: 'eyebrow' }, sc.name + '  ·  Parte ' + (pi + 1) + ' de ' + sc.slides.length),
         el('div', { class: 'sttitle' }, sl.title || 'Sem título'),
@@ -1239,7 +1346,7 @@ function renderMesa() {
    BIBLIOTECA
    ========================================================= */
 let libF = 'all';
-function usage(id) { let n = 0; P.scenes.forEach(sc => { n += sc.music.filter(x => x === id).length; sc.slides.forEach(sl => { if (sl.image === id) n++; n += sl.music.filter(x => x === id).length; }); }); P.sounds.forEach(s => s.media === id && n++); P.portraits.forEach(s => s.media === id && n++); return n; }
+function usage(id) { let n = 0; P.scenes.forEach(sc => { n += sc.music.filter(x => x === id).length; sc.slides.forEach(sl => { if (sl.image === id) n++; n += sl.music.filter(x => x === id).length; }); }); P.sounds.forEach(s => s.media === id && n++); P.portraits.forEach(s => s.media === id && n++); (P.maps || []).forEach(s => s.media === id && n++); return n; }
 function renderLib() {
   const v = V(); v.className = 'page'; const w = el('div', { class: 'wrap' }); v.append(w);
   const up = el('input', { type: 'file', multiple: true, accept: 'image/*,audio/*,video/*', style: { display: 'none' }, onchange: async e => { const ids = await addFiles(e.target.files); toast(ids.length + ' arquivo(s) adicionados'); renderLib(); } });
@@ -1423,7 +1530,7 @@ async function newSession(copy) {
   clearTimeout(saveT); await persist();
   let p;
   if (copy) { p = JSON.parse(JSON.stringify(P)); }
-  else { p = migrate({ scenes: [scene({ name: 'Cena 1', slides: [slide({ title: 'Abertura', titleMode: 'breve', transition: 'preto' })] })], sounds: JSON.parse(JSON.stringify(P.sounds)), portraits: JSON.parse(JSON.stringify(P.portraits)), groups: JSON.parse(JSON.stringify(P.groups)), keys: { ...P.keys }, settings: { ...P.settings }, labels: { ...P.labels } }); }
+  else { p = migrate({ scenes: [scene({ name: 'Cena 1', slides: [slide({ title: 'Abertura', titleMode: 'breve', transition: 'preto' })] })], sounds: JSON.parse(JSON.stringify(P.sounds)), portraits: JSON.parse(JSON.stringify(P.portraits)), groups: JSON.parse(JSON.stringify(P.groups)), maps: JSON.parse(JSON.stringify(P.maps)), travel: JSON.parse(JSON.stringify(P.travel)), keys: { ...P.keys }, settings: { ...P.settings }, labels: { ...P.labels } }); }
   p.title = name.trim() || 'Sessão'; p.lastId = null;
   const id = uid(); SESS.push({ id, name: p.title, created: Date.now(), updated: Date.now() });
   await DB.put('kv', p, 'project:' + id); await DB.put('kv', SESS, 'sessions'); Sync.schedule();
@@ -1738,6 +1845,326 @@ function oldPackCard() {
     }, 'danger'));
 }
 async function uploadAsPads(files) { const ids = await addFiles(files); ids.filter(id => isT(MEDIA.get(id), 'audio')).forEach(id => P.sounds.push({ id: uid(), name: MEDIA.get(id).name, media: id, key: '', loop: false, vol: 1 })); save(); toast(ids.length + ' som(ns) adicionados'); render(); }
+
+/* =========================================================
+   MAPA: distâncias e tempo de viagem (regras do D&D 5e)
+   ========================================================= */
+const MI_KM = 1.609;
+// terreno: chave, nome, multiplicador de tempo (0 = água), cor do traço
+const TER = [
+  ['estrada', 'Estrada', 1, '#b8432f'],
+  ['campo', 'Campo aberto', 1, '#c98a2e'],
+  ['floresta', 'Floresta', 2, '#3f8f4a'],
+  ['montanha', 'Montanha', 2, '#8a5a32'],
+  ['pantano', 'Pântano', 2, '#7a8a2a'],
+  ['neve', 'Neve ou gelo', 2, '#5a9cc8'],
+  ['mar', 'Mar ou rio', 0, '#1f8a96']];
+const terOf = k => TER.find(t => t[0] === k) || TER[0];
+// barcos do Livro do Mestre: chave, nome, milhas por hora, horas por dia
+const BOATS = [['remo', 'Barco a remo', 1.5, 8], ['quilha', 'Barco de quilha', 1, 24], ['vela', 'Navio a vela', 2, 24], ['drakkar', 'Barco longo (drakkar)', 3, 24], ['gale', 'Galé', 4, 24]];
+const TRANS = [['pe', 'A pé', 'a pé'], ['cavalo', 'Cavalo', 'a cavalo'], ['carroca', 'Carroça', 'de carroça'], ['voo', 'Animal voador', 'em animal voador']];
+const PACE = { lento: .75, normal: 1, rapido: 1.25 };
+const DEF_TRAVEL = { pace: 'normal', boat: 'vela', sp: { pe: 39, cavalo: 48, carroca: 29, voo: 103 }, tvCard: true, tvT: 'pe' };
+const MS = { mapId: null, mode: 'medir', routeId: null, draft: { pts: [], ter: [] }, brush: 'estrada', cal: null, s: 1, tx: 0, ty: 0, fitFor: null };
+function newMapObj(media) { return { id: uid(), name: (MEDIA.get(media) || {}).name || 'Mapa', media, w: 0, h: 0, hexPx: 0, hexKm: 39, places: [], routes: [] }; }
+const curMap = () => P.maps.find(m => m.id === MS.mapId) || P.maps[0] || null;
+const curRoute = m => (m && MS.routeId && m.routes.find(r => r.id === MS.routeId)) || MS.draft;
+const segKm = (m, a, b) => m.hexPx ? Math.hypot(b.x - a.x, b.y - a.y) / m.hexPx * m.hexKm : 0;
+const fmtKm = km => km < 10 ? km.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) : Math.round(km).toLocaleString('pt-BR');
+function fmtDays(d) {
+  if (!(d > 0)) return 'agora';
+  if (d < .9) { const h = Math.max(1, Math.round(d * 8)); return h + (h === 1 ? ' hora' : ' horas'); }
+  const n = Math.round(d * 2) / 2, i = Math.floor(n);
+  return i + (i === 1 ? ' dia' : ' dias') + (n % 1 ? ' e meio' : '');
+}
+function rumo(a, b) {
+  const ang = (Math.atan2(b.x - a.x, a.y - b.y) * 180 / Math.PI + 360) % 360;
+  return ['norte', 'nordeste', 'leste', 'sudeste', 'sul', 'sudoeste', 'oeste', 'noroeste'][Math.round(ang / 45) % 8];
+}
+function placeName(m, p) { const pl = p && p.pl && m.places.find(x => x.id === p.pl); return pl ? pl.name : ''; }
+function routeName(m, r) {
+  if (r.name) return r.name;
+  const a = placeName(m, r.pts[0]), b = placeName(m, r.pts[r.pts.length - 1]);
+  return (a || 'Ponto inicial') + ' → ' + (b || 'ponto final');
+}
+function calcRoute(m, r) {
+  const T = P.travel, pf = PACE[T.pace] || 1, boat = BOATS.find(b => b[0] === T.boat) || BOATS[2], boatDay = boat[2] * MI_KM * boat[3];
+  let land = 0, eff = 0, sea = 0, hard = 0;
+  for (let i = 1; i < r.pts.length; i++) {
+    const km = segKm(m, r.pts[i - 1], r.pts[i]), t = terOf(r.ter[i - 1]);
+    if (t[2] === 0) sea += km; else { land += km; eff += km * t[2]; if (t[2] > 1) hard += km; }
+  }
+  const a = r.pts[0], b = r.pts[r.pts.length - 1], direct = r.pts.length > 1 ? segKm(m, a, b) : 0, seaDays = sea / boatDay;
+  const rows = TRANS.map(([k]) => k === 'voo' ? { k, days: direct / (T.sp.voo * pf) } : { k, days: eff / (T.sp[k] * pf) + seaDays });
+  return { total: land + sea, land, sea, hard, direct, seaDays, hexes: (land + sea) / m.hexKm, rows, boat, dir: r.pts.length > 1 ? rumo(a, b) : '' };
+}
+
+/* ---------- detecção automática da grade de hexágonos ---------- */
+function detectHex(img) {
+  // ignora a moldura (bordas costumam ter hachuras que confundem a medida)
+  const mx = img.naturalWidth * .06, my = img.naturalHeight * .08, sc = Math.min(1, 1500 / img.naturalWidth);
+  const W = Math.round((img.naturalWidth - 2 * mx) * sc), H = Math.round((img.naturalHeight - 2 * my) * sc);
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  g.drawImage(img, mx, my, img.naturalWidth - 2 * mx, img.naturalHeight - 2 * my, 0, 0, W, H);
+  const d = g.getImageData(0, 0, W, H).data, col = new Float64Array(W), row = new Float64Array(H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const i = (y * W + x) * 4, l = d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11, sat = Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]);
+    if (l > 150 && l < 238 && sat < 40) { col[x]++; row[y]++; }
+  }
+  const best = p => {
+    const n = p.length, R = 50, q = new Float64Array(n);
+    for (let i = 0; i < n; i++) { let s = 0, c = 0; for (let j = Math.max(0, i - R); j <= Math.min(n - 1, i + R); j++) { s += p[j]; c++; } q[i] = p[i] - s / c; }
+    const maxK = Math.min(200, n / 3 | 0), ac = new Float64Array(maxK);
+    for (let k = 0; k < maxK; k++) { let s = 0; for (let i = 0; i < n - k; i++) s += q[i] * q[i + k]; ac[k] = s / (n - k); }
+    if (!(ac[0] > 0)) return { k: 0, v: 0 };
+    for (let k = 0; k < maxK; k++) ac[k] /= ac[0];
+    const peaks = []; for (let k = 6; k < maxK - 1; k++) if (ac[k] > ac[k - 1] && ac[k] >= ac[k + 1] && ac[k] > .12) peaks.push(k);
+    if (!peaks.length) return { k: 0, v: 0 };
+    const top = Math.max(...peaks.map(k => ac[k])), k0 = peaks.find(k => ac[k] >= top * .6);
+    return { k: k0, v: ac[k0] };
+  };
+  const a = best(col), b = best(row), w = a.v >= b.v ? a : b;
+  if (w.v < .25 || !w.k) return 0;
+  return 2 * w.k / sc; // as arestas se repetem a cada meio hexágono
+}
+
+/* ---------- tela ---------- */
+function renderMapa() {
+  const v = V(); v.className = 'mapa';
+  const m = curMap();
+  if (!m) {
+    v.className = 'page';
+    add(v, el('div', { class: 'wrap' }, el('div', { class: 'phead' }, el('h1', {}, 'Mapa')),
+      el('p', { class: 'lead' }, 'Envie o mapa da campanha, marque os lugares e descubra quanto tempo leva cada viagem a pé, a cavalo, de carroça, de barco ou voando, pelas regras do D&D 5e. Também dá para mostrar o mapa e a rota na TV.'),
+      el('div', { class: 'empty', style: { padding: '34px' } }, I('map', 26), el('div', { style: { margin: '8px 0 4px', color: 'var(--ink)' } }, 'Nenhum mapa ainda'), 'Funciona melhor com mapas que têm grade de hexágonos.', el('br'), btn('upload', 'Escolher a imagem do mapa', newMap, 'primary'))));
+    return;
+  }
+  MS.mapId = m.id;
+  const md = MEDIA.get(m.media);
+  const vp = el('div', { class: 'mapvp' }), inner = el('div', { class: 'mapin' }), ov = el('div', { class: 'mapov' });
+  const tools = el('div', { class: 'maptools' });
+  const hint = el('div', { class: 'maphint' });
+  const main = el('div', { class: 'mapmain' }, tools, vp, hint), side = el('div', { class: 'mapside' });
+  add(v, main, side);
+  if (!md) { vp.append(el('div', { class: 'mapnone' }, I('image', 22), 'A imagem deste mapa não está na biblioteca.', btn('image', 'Escolher imagem', () => picker(['image'], false, id => { m.media = id; m.w = m.h = 0; save(); renderMapa(); }), 'sm'))); drawSide(side); return; }
+  const img = el('img', { src: md.url, draggable: false, alt: '' });
+  inner.append(img, ov); vp.append(inner);
+  MS.vp = vp; MS.inner = inner; MS.ov = ov; MS.side = side; MS.hint = hint; MS.tools = tools;
+  const ready = () => {
+    if (!m.w || m.w !== img.naturalWidth) { m.w = img.naturalWidth; m.h = img.naturalHeight; save(); }
+    inner.style.width = m.w + 'px'; inner.style.height = m.h + 'px';
+    if (isMobile()) { const vw = vp.clientWidth; vp.style.height = Math.round(Math.min(innerHeight * .6, Math.max(240, vw * m.h / m.w * 1.3))) + 'px'; }
+    if (MS.fitFor !== m.id) { mapFit(); MS.fitFor = m.id; } else mapApply();
+    if (!m.hexPx && !m.triedAuto) { m.triedAuto = true; const px = detectHex(img); if (px) { m.hexPx = px; m.autoHex = true; save(); toast('Grade de hexágonos detectada sozinha. Confira em Escala.'); drawSide(); } }
+  };
+  if (img.complete && img.naturalWidth) setTimeout(ready, 0); else img.onload = ready;
+  drawTools(); drawSide(); mapPointer(vp);
+  vp.addEventListener('wheel', e => { e.preventDefault(); mapZoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * .0015)); }, { passive: false });
+}
+function drawTools() {
+  const t = MS.tools; if (!t) return; t.innerHTML = '';
+  const modes = [['mover', 'Mover', 'hand'], ['medir', 'Medir rota', 'route'], ['lugar', 'Lugares', 'pin'], ['escala', 'Escala', 'ruler']];
+  add(t, el('div', { class: 'segc mmodes' }, modes.map(([k, l, ic]) => el('button', { class: MS.mode === k ? 'on' : '', onclick: () => { MS.mode = k; MS.cal = null; drawTools(); drawOv(); } }, I(ic, 15), el('span', {}, l)))),
+    el('div', { class: 'sp' }),
+    ibtn('minus', () => mapZoomCenter(1 / 1.4), 'Afastar', 'zb'), ibtn('plus', () => mapZoomCenter(1.4), 'Aproximar', 'zb'), ibtn('fit', mapFit, 'Mostrar o mapa inteiro'));
+  const H = { mover: 'Arraste para mover. Role ou faça pinça para dar zoom.', medir: 'Clique no mapa para marcar o caminho, ponto a ponto, seguindo as estradas. Perto de um lugar marcado, o ponto gruda nele.', lugar: 'Clique para marcar um lugar. Clique num lugar para renomear ou apagar. Arraste para mudar de posição.', escala: MS.cal ? 'Agora clique no centro de outro hexágono, alguns hexágonos para o lado.' : 'Clique no centro de um hexágono.' };
+  if (MS.hint) MS.hint.textContent = H[MS.mode];
+  if (MS.vp) MS.vp.dataset.mode = MS.mode;
+}
+function mapApply() { if (!MS.inner) return; MS.inner.style.transform = 'translate(' + MS.tx + 'px,' + MS.ty + 'px) scale(' + MS.s + ')'; drawOv(); }
+function mapFit() {
+  const m = curMap(); if (!MS.vp || !m || !m.w) return; const r = MS.vp.getBoundingClientRect();
+  MS.s = Math.min(r.width / m.w, r.height / m.h); MS.tx = (r.width - m.w * MS.s) / 2; MS.ty = (r.height - m.h * MS.s) / 2; mapApply();
+}
+function mapZoomAt(cx, cy, f) {
+  const m = curMap(); if (!MS.vp || !m || !m.w) return; const r = MS.vp.getBoundingClientRect(), fit = Math.min(r.width / m.w, r.height / m.h);
+  const ns = Math.max(fit * .5, Math.min(fit * 14, MS.s * f)), ix = (cx - r.left - MS.tx) / MS.s, iy = (cy - r.top - MS.ty) / MS.s;
+  MS.s = ns; MS.tx = cx - r.left - ix * ns; MS.ty = cy - r.top - iy * ns; mapApply();
+}
+function mapZoomCenter(f) { const r = MS.vp.getBoundingClientRect(); mapZoomAt(r.left + r.width / 2, r.top + r.height / 2, f); }
+function toImg(e) { const r = MS.vp.getBoundingClientRect(); return { x: (e.clientX - r.left - MS.tx) / MS.s, y: (e.clientY - r.top - MS.ty) / MS.s }; }
+function hitPlace(m, p, px) { let best = null, bd = (px || 16) / MS.s; m.places.forEach(pl => { const d = Math.hypot(pl.x - p.x, pl.y - p.y); if (d < bd) { bd = d; best = pl; } }); return best; }
+function mapPointer(vp) {
+  const pts = new Map(); let g = null;
+  vp.addEventListener('pointerdown', e => {
+    if (e.button > 0) return; try { vp.setPointerCapture(e.pointerId); } catch (x) { }
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 1) { const m = curMap(); g = { sx: e.clientX, sy: e.clientY, tx: MS.tx, ty: MS.ty, moved: false, drag: MS.mode === 'lugar' && m ? hitPlace(m, toImg(e)) : null }; }
+    else if (pts.size === 2) { const [a, b] = [...pts.values()]; g = { pinch: true, d: Math.hypot(a.x - b.x, a.y - b.y) || 1, s: MS.s, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2, tx: MS.tx, ty: MS.ty, moved: true }; }
+  });
+  vp.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId) || !g) return; pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (g.pinch && pts.size >= 2) {
+      const [a, b] = [...pts.values()], r = vp.getBoundingClientRect(), m = curMap(), fit = Math.min(r.width / m.w, r.height / m.h);
+      const ns = Math.max(fit * .5, Math.min(fit * 14, g.s * Math.hypot(a.x - b.x, a.y - b.y) / g.d)), ix = (g.cx - r.left - g.tx) / g.s, iy = (g.cy - r.top - g.ty) / g.s, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      MS.s = ns; MS.tx = mx - r.left - ix * ns; MS.ty = my - r.top - iy * ns; mapApply(); return;
+    }
+    const dx = e.clientX - g.sx, dy = e.clientY - g.sy; if (Math.hypot(dx, dy) > 6) g.moved = true; if (!g.moved) return;
+    if (g.drag) { const p = toImg(e); g.drag.x = p.x; g.drag.y = p.y; const m = curMap(); m.routes.concat([MS.draft]).forEach(r => r.pts.forEach(q => { if (q.pl === g.drag.id) { q.x = p.x; q.y = p.y; } })); drawOv(); }
+    else { MS.tx = g.tx + dx; MS.ty = g.ty + dy; mapApply(); }
+  });
+  const end = e => {
+    if (!pts.has(e.pointerId)) return; pts.delete(e.pointerId);
+    if (g && !g.pinch && !g.moved && e.type === 'pointerup') mapClick(toImg(e));
+    if (g && g.drag && g.moved) { save(); drawSide(); }
+    if (pts.size === 1 && g && g.pinch) { const [a] = [...pts.values()]; g = { sx: a.x, sy: a.y, tx: MS.tx, ty: MS.ty, moved: true }; } else if (!pts.size) g = null;
+  };
+  vp.addEventListener('pointerup', end); vp.addEventListener('pointercancel', end);
+}
+function mapClick(p) {
+  const m = curMap(); if (!m || !m.w || p.x < 0 || p.y < 0 || p.x > m.w || p.y > m.h) return;
+  if (MS.mode === 'lugar') {
+    const hit = hitPlace(m, p);
+    if (hit) { const n = prompt('Nome do lugar (apague o texto para remover o lugar)', hit.name); if (n === null) return; if (!n.trim()) delPlace(m, hit); else hit.name = n.trim(); }
+    else { const n = prompt('Nome deste lugar', ''); if (!n || !n.trim()) return; m.places.push({ id: uid(), name: n.trim(), x: p.x, y: p.y }); }
+    save(); drawOv(); drawSide(); return;
+  }
+  if (MS.mode === 'escala') {
+    if (!MS.cal) { MS.cal = p; drawTools(); drawOv(); return; }
+    const d = Math.hypot(p.x - MS.cal.x, p.y - MS.cal.y), a = MS.cal; MS.cal = { a, b: p }; drawOv();
+    setTimeout(() => {
+      const n = prompt('Quantos hexágonos você andou de um centro até o outro? (conte os passos, sem contar o hexágono de partida)', '5');
+      MS.cal = null;
+      if (n !== null && +String(n).replace(',', '.') > 0 && d > 4) { m.hexPx = d / +String(n).replace(',', '.'); m.autoHex = false; save(); toast('Escala calibrada'); MS.mode = 'medir'; }
+      drawTools(); drawOv(); drawSide();
+    }, 30);
+    return;
+  }
+  if (MS.mode === 'medir') {
+    const r = curRoute(m), hit = hitPlace(m, p, 20), q = hit ? { x: hit.x, y: hit.y, pl: hit.id } : { x: p.x, y: p.y };
+    if (r.pts.length) r.ter.push(MS.brush);
+    r.pts.push(q); if (r !== MS.draft) save(); drawOv(); drawSide(); updTVRoute();
+  }
+}
+function delPlace(m, pl) { m.places = m.places.filter(x => x !== pl); m.routes.concat([MS.draft]).forEach(r => r.pts.forEach(q => { if (q.pl === pl.id) delete q.pl; })); }
+const escX = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function drawOv() {
+  const m = curMap(); if (!MS.ov || !m || !m.w) return; const k = 1 / MS.s; let h = '';
+  const r = curRoute(m);
+  for (let i = 1; i < r.pts.length; i++) {
+    const a = r.pts[i - 1], b = r.pts[i], t = terOf(r.ter[i - 1]);
+    h += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#0a0908" stroke-opacity=".8" stroke-width="' + 10 * k + '" stroke-linecap="round"/>';
+    h += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#f4ead6" stroke-width="' + 7 * k + '" stroke-linecap="round"/>';
+    h += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="' + t[3] + '" stroke-width="' + 4 * k + '" stroke-linecap="round"' + (t[2] === 0 ? ' stroke-dasharray="' + 10 * k + ' ' + 8 * k + '"' : '') + '/>';
+  }
+  r.pts.forEach((p, i) => { h += '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + (i === 0 || i === r.pts.length - 1 ? 6.5 : 4) * k + '" fill="' + (i === 0 ? '#6dbab3' : i === r.pts.length - 1 ? '#a3352b' : '#e8d9a8') + '" stroke="#0a0908" stroke-width="' + 2 * k + '"/>'; });
+  m.places.forEach(pl => {
+    h += '<g><circle cx="' + pl.x + '" cy="' + pl.y + '" r="' + 7 * k + '" fill="#1e1812" stroke="#eee4cf" stroke-width="' + 2.2 * k + '"/><circle cx="' + pl.x + '" cy="' + pl.y + '" r="' + 2.4 * k + '" fill="#eee4cf"/>';
+    h += '<text x="' + pl.x + '" y="' + (pl.y - 12 * k) + '" font-size="' + 13 * k + '" text-anchor="middle" fill="#eee4cf" stroke="#0a0908" stroke-width="' + 3.5 * k + '" paint-order="stroke" font-family="Georgia,serif" font-weight="600">' + escX(pl.name) + '</text></g>';
+  });
+  if (MS.cal) { const a = MS.cal.a || MS.cal, b = MS.cal.b; h += '<circle cx="' + a.x + '" cy="' + a.y + '" r="' + 6 * k + '" fill="none" stroke="#6dbab3" stroke-width="' + 3 * k + '"/>'; if (b) h += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#6dbab3" stroke-width="' + 3 * k + '" stroke-dasharray="' + 6 * k + '"/><circle cx="' + b.x + '" cy="' + b.y + '" r="' + 6 * k + '" fill="none" stroke="#6dbab3" stroke-width="' + 3 * k + '"/>'; }
+  if (m.hexPx && MS.mode === 'escala' && !MS.cal) {
+    // mostra um hexágono do tamanho calibrado no centro da tela, para conferir
+    const vr = MS.vp.getBoundingClientRect(), cx = (vr.width / 2 - MS.tx) / MS.s, cy = (vr.height / 2 - MS.ty) / MS.s, R = m.hexPx / Math.sqrt(3);
+    let d = ''; for (let i = 0; i < 6; i++) { const a = Math.PI / 3 * i + Math.PI / 6; d += (i ? 'L' : 'M') + (cx + R * Math.cos(a)) + ' ' + (cy + R * Math.sin(a)); }
+    h += '<path d="' + d + 'Z" fill="rgba(109,186,179,.18)" stroke="#6dbab3" stroke-width="' + 2.5 * k + '"/>';
+  }
+  MS.ov.innerHTML = '<svg viewBox="0 0 ' + m.w + ' ' + m.h + '" width="' + m.w + '" height="' + m.h + '">' + h + '</svg>';
+}
+function newMap() {
+  picker(['image'], false, id => { const m = newMapObj(id); P.maps.push(m); MS.mapId = m.id; MS.routeId = null; MS.draft = { pts: [], ter: [] }; MS.fitFor = null; MS.mode = 'medir'; save(); renderMapa(); });
+}
+function mcard(title, ic, ...k) { return el('div', { class: 'card mcard' }, el('h3', {}, I(ic, 16), title), ...k); }
+function drawSide(target) {
+  const s = target || MS.side, m = curMap(); if (!s || !m) return; s.innerHTML = '';
+  const T = P.travel, r = curRoute(m), saved = r !== MS.draft;
+  // mapa
+  const mapCard = mcard('Mapa', 'map',
+    P.maps.length > 1 ? el('select', { style: { marginBottom: '8px' }, onchange: e => { MS.mapId = e.target.value; MS.routeId = null; MS.draft = { pts: [], ter: [] }; MS.fitFor = null; renderMapa(); } }, P.maps.map(x => el('option', { value: x.id, selected: x.id === m.id }, x.name))) : el('div', { class: 'mname' }, m.name),
+    el('div', { class: 'mrow' }, btn('plus', 'Novo mapa', newMap, 'sm'), btn('edit', 'Renomear', () => { const n = prompt('Nome do mapa', m.name); if (n && n.trim()) { m.name = n.trim(); save(); drawSide(); } }, 'sm'), btn('image', 'Trocar imagem', () => picker(['image'], false, id => { m.media = id; m.w = m.h = 0; MS.fitFor = null; save(); renderMapa(); }), 'sm'),
+      ibtn('trash', () => { if (!confirm('Apagar o mapa "' + m.name + '" com seus lugares e rotas? A imagem continua na biblioteca.')) return; P.maps = P.maps.filter(x => x !== m); MS.mapId = null; MS.routeId = null; MS.draft = { pts: [], ter: [] }; if (live.map && live.map.id === m.id) mapOffTV(); save(); renderMapa(); }, 'Apagar mapa', 'del', 14)));
+  // escala
+  const scale = mcard('Escala', 'ruler',
+    m.hexPx ? el('div', { class: 'mrow' }, el('span', {}, '1 hexágono ='), el('input', { type: 'number', min: 0.1, step: 'any', value: +m.hexKm.toFixed(2), style: { width: '84px' }, onchange: e => { const v = +e.target.value; if (v > 0) { m.hexKm = v; save(); drawSide(); } } }), el('span', {}, 'km'), el('span', { class: 'muted' }, '(' + Math.round(m.hexKm / MI_KM) + ' milhas)'))
+      : el('p', { class: 'mwarn' }, 'Ainda falta a escala. Clique no centro de um hexágono e depois no centro de outro, alguns hexágonos para o lado.'),
+    el('p', { class: 'mnote' }, m.hexPx ? 'Padrão: 1 hexágono = 1 dia de caminhada (24 milhas, cerca de 39 km), o tamanho clássico para mundos grandes.' + (m.autoHex ? ' A grade foi medida sozinha pela imagem; se as contas parecerem estranhas, calibre à mão.' : '') : ''),
+    el('div', { class: 'mrow' }, btn('ruler', m.hexPx ? 'Calibrar à mão' : 'Calibrar agora', () => { MS.mode = 'escala'; MS.cal = null; drawTools(); drawOv(); }, 'sm' + (m.hexPx ? '' : ' primary')),
+      m.hexPx ? null : btn('sparkle', 'Detectar sozinho', () => { const img = MS.inner && MS.inner.querySelector('img'); const px = img && detectHex(img); if (px) { m.hexPx = px; m.autoHex = true; save(); toast('Grade detectada'); drawSide(); drawOv(); } else toast('Não encontrei a grade. Calibre à mão.'); }, 'sm')));
+  // viagem
+  const vt = mcard(saved ? routeName(m, r) : 'Medir viagem', 'route');
+  if (r.pts.length < 2) add(vt, el('p', { class: 'mnote' }, r.pts.length ? 'Agora clique no próximo ponto do caminho.' : 'Escolha Medir rota e clique no mapa: um ponto na saída, pontos nas curvas da estrada e um na chegada. Marque os lugares antes para os pontos grudarem neles.'));
+  else if (!m.hexPx) add(vt, el('p', { class: 'mwarn' }, 'Calibre a escala para ver as distâncias.'));
+  else {
+    const c = calcRoute(m, r);
+    add(vt, el('div', { class: 'mbig' }, el('b', {}, fmtKm(c.total) + ' km'), el('span', {}, Math.round(c.total / MI_KM).toLocaleString('pt-BR') + ' milhas  ·  ' + c.hexes.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' hexágonos  ·  rumo ' + c.dir)),
+      el('div', { class: 'mtimes' }, c.rows.map(x => { const t = TRANS.find(y => y[0] === x.k); return el('div', { class: 'mt' }, I(x.k === 'pe' ? 'walk' : x.k === 'cavalo' ? 'horse' : x.k === 'carroca' ? 'cart' : 'wing', 18), el('span', { class: 'grow' }, t[1]), el('b', {}, fmtDays(x.days))); })),
+      el('p', { class: 'mnote' }, [
+        c.sea ? 'Inclui ' + fmtKm(c.sea) + ' km de água: ' + fmtDays(c.seaDays) + ' de ' + c.boat[1].toLowerCase() + (c.boat[3] === 24 ? ', navegando dia e noite.' : '.') + ' ' : '',
+        c.hard ? fmtKm(c.hard) + ' km em terreno difícil contam em dobro. ' : '',
+        'O voo vai em linha reta: ' + fmtKm(c.direct) + ' km. ',
+        'Um dia de viagem são 8 horas de marcha.'].join('')),
+      c.hard && r.ter.some(t => ['floresta', 'montanha', 'pantano'].includes(t)) ? el('p', { class: 'mnote warnc' }, 'Carroça fora da estrada, na floresta, na montanha ou no pântano, pode nem passar.') : null);
+  }
+  add(vt, el('div', { class: 'mlab' }, 'Terreno do próximo trecho'),
+    el('div', { class: 'chips' }, TER.map(t => el('button', { class: 'chip tchip' + (MS.brush === t[0] ? ' on' : ''), onclick: () => { MS.brush = t[0]; drawSide(); } }, el('i', { style: { background: t[3] } }), t[1]))));
+  if (r.pts.length > 1) add(vt, el('details', { class: 'msegs', open: r.pts.length <= 4 }, el('summary', {}, 'Trechos (' + (r.pts.length - 1) + '): troque o terreno de cada um'),
+    r.ter.map((t, i) => el('div', { class: 'mrow' }, el('span', { class: 'grow' }, 'Trecho ' + (i + 1) + (m.hexPx ? ': ' + fmtKm(segKm(m, r.pts[i], r.pts[i + 1])) + ' km' : '')),
+      el('select', { style: { width: '150px' }, onchange: e => { r.ter[i] = e.target.value; if (saved) save(); drawOv(); drawSide(); updTVRoute(); } }, TER.map(x => el('option', { value: x[0], selected: x[0] === t }, x[1])))))));
+  add(vt, el('div', { class: 'mrow' },
+    r.pts.length ? btn('undo', 'Desfazer ponto', () => { r.pts.pop(); r.ter.splice(Math.max(0, r.pts.length - 1)); if (saved) save(); drawOv(); drawSide(); updTVRoute(); }, 'sm') : null,
+    saved ? btn('edit', 'Renomear', () => { const n = prompt('Nome da rota', routeName(m, r)); if (n !== null) { r.name = n.trim(); save(); drawSide(); } }, 'sm') : (r.pts.length > 1 ? btn('check', 'Salvar rota', () => { const n = prompt('Nome da rota', routeName(m, r)); if (n === null) return; const nr = { id: uid(), name: n.trim(), pts: r.pts, ter: r.ter }; m.routes.push(nr); MS.draft = { pts: [], ter: [] }; MS.routeId = nr.id; save(); drawSide(); toast('Rota salva'); }, 'sm primary') : null),
+    saved || r.pts.length ? btn('plus', 'Nova medição', () => { MS.routeId = null; MS.draft = { pts: [], ter: [] }; MS.mode = 'medir'; drawTools(); drawOv(); drawSide(); }, 'sm') : null));
+  // rotas salvas
+  const rl = mcard('Rotas salvas', 'scroll', m.routes.length ? el('div', { class: 'mroutes' }, m.routes.map(x => {
+    const c = m.hexPx && x.pts.length > 1 ? calcRoute(m, x) : null, pe = c && c.rows[0];
+    return el('div', { class: 'mr' + (x.id === MS.routeId ? ' on' : ''), onclick: () => { MS.routeId = x.id === MS.routeId ? null : x.id; drawOv(); drawSide(); } },
+      el('div', { class: 'grow' }, el('div', { class: 'mrt' }, routeName(m, x)), el('div', { class: 'mrs' }, c ? fmtKm(c.total) + ' km  ·  ' + fmtDays(pe.days) + ' a pé' : 'sem escala')),
+      ibtn('trash', e => { e.stopPropagation(); if (!confirm('Apagar a rota "' + routeName(m, x) + '"?')) return; m.routes = m.routes.filter(y => y !== x); if (MS.routeId === x.id) MS.routeId = null; save(); drawOv(); drawSide(); }, 'Apagar rota', 'del', 14));
+  })) : el('p', { class: 'mnote' }, 'As rotas que você salvar ficam aqui, para responder na hora quando os jogadores perguntarem.'));
+  // lugares
+  const pl = mcard('Lugares (' + m.places.length + ')', 'pin', m.places.length ? el('div', { class: 'chips' }, m.places.map(p => el('button', { class: 'chip', onclick: () => mapCenterOn(p), title: 'Centralizar no mapa' }, p.name))) : el('p', { class: 'mnote' }, 'Escolha Lugares e clique nas cidades e castelos do mapa para dar nome a eles.'),
+    el('div', { class: 'mrow', style: { marginTop: '8px' } }, btn('pin', MS.mode === 'lugar' ? 'Clique no mapa' : 'Marcar lugares', () => { MS.mode = 'lugar'; drawTools(); drawSide(); }, 'sm')));
+  // ritmo
+  const rt = mcard('Ritmo e transporte', 'sliders',
+    el('div', { class: 'mlab' }, 'Ritmo de viagem'),
+    segc(T.pace, [['lento', 'Lento'], ['normal', 'Normal'], ['rapido', 'Rápido']], k => { T.pace = k; save(); drawSide(); updTVRoute(); }),
+    el('p', { class: 'mnote' }, { lento: 'Lento (18 milhas por dia a pé): o grupo pode se mover em Furtividade.', normal: 'Normal (24 milhas por dia a pé).', rapido: 'Rápido (30 milhas por dia a pé): -5 na Percepção passiva.' }[T.pace]),
+    el('div', { class: 'mlab' }, 'Barco usado nas travessias'),
+    el('select', { onchange: e => { T.boat = e.target.value; save(); drawSide(); updTVRoute(); } }, BOATS.map(b => el('option', { value: b[0], selected: b[0] === T.boat }, b[1] + ' (' + Math.round(b[2] * MI_KM * b[3]) + ' km por dia' + (b[3] === 24 ? ', dia e noite' : '') + ')'))),
+    el('details', { class: 'msegs' }, el('summary', {}, 'Velocidades no ritmo normal (km por dia)'),
+      TRANS.map(([k, n]) => el('div', { class: 'mrow' }, el('span', { class: 'grow' }, n), el('input', { type: 'number', min: 1, value: T.sp[k], style: { width: '84px' }, onchange: e => { const v = +e.target.value; if (v > 0) { T.sp[k] = v; save(); drawSide(); updTVRoute(); } } }))),
+      el('p', { class: 'mnote' }, 'Padrões: a pé 24 milhas, cavalo 30 milhas (ritmo rápido sem perder Percepção), carroça 18 milhas, grifo ou hipogrifo voando 80 pés, cerca de 64 milhas por dia. Terreno difícil não atrapalha quem voa.'),
+      btn('repeat', 'Voltar aos padrões', () => { T.sp = { ...DEF_TRAVEL.sp }; save(); drawSide(); updTVRoute(); }, 'sm ghost')));
+  // TV
+  const on = tvOpen(), onMap = live.map && live.map.id === m.id;
+  const tvc = mcard('Na TV', 'tv',
+    el('label', { class: 'mchk' }, el('input', { type: 'checkbox', checked: T.tvCard, onchange: e => { T.tvCard = e.target.checked; save(); updTVRoute(); } }), 'Mostrar o tempo de viagem junto com a rota'),
+    el('div', { class: 'mrow' }, el('span', { class: 'grow muted' }, 'Tempo mostrado'), el('select', { style: { width: '170px' }, onchange: e => { T.tvT = e.target.value; save(); updTVRoute(); } }, TRANS.map(([k, n]) => el('option', { value: k, selected: T.tvT === k }, n)).concat([el('option', { value: 'todos', selected: T.tvT === 'todos' }, 'Todos')]))),
+    on ? null : el('p', { class: 'mnote' }, 'Abra a TV no botão do topo para projetar.'),
+    el('div', { class: 'mrow' },
+      btn('map', 'Mapa inteiro', () => mapToTV(false), 'sm'),
+      r.pts.length > 1 ? btn('route', 'Rota na TV', () => mapToTV(true), 'sm primary') : null,
+      onMap ? btn('x', 'Tirar da TV', mapOffTV, 'sm danger') : null));
+  add(s, vt, rl, pl, scale, rt, tvc, mapCard);
+}
+function mapCenterOn(p) { const r = MS.vp.getBoundingClientRect(), m = curMap(), fit = Math.min(r.width / m.w, r.height / m.h); MS.s = Math.max(MS.s, fit * 2.5); MS.tx = r.width / 2 - p.x * MS.s; MS.ty = r.height / 2 - p.y * MS.s; mapApply(); }
+
+/* ---------- mapa na TV ---------- */
+function tvCardData(m, r) {
+  if (!r || !P.travel.tvCard || r.pts.length < 2 || !m.hexPx) return null;
+  const c = calcRoute(m, r), k = P.travel.tvT, ln = TRANS.find(t => t[0] === k);
+  const lines = k === 'todos' ? c.rows.map(x => fmtDays(x.days) + ' ' + TRANS.find(t => t[0] === x.k)[2]) : [fmtDays(c.rows.find(x => x.k === k).days) + ' ' + ln[2] + (c.sea && k !== 'voo' ? ', com travessia de barco' : '')];
+  return { t: routeName(m, r), d: 'cerca de ' + fmtKm(k === 'voo' ? c.direct : c.total) + ' km', lines };
+}
+function mapToTV(withRoute) {
+  if (!tvOpen()) { toast('Abra a TV primeiro, no botão do topo'); return; }
+  const m = curMap(); if (!m || !m.w || !MEDIA.get(m.media)) return;
+  const r = withRoute ? curRoute(m) : null;
+  live.map = { id: m.id, rid: r ? (r === MS.draft ? 'draft' : r.id) : null };
+  sendMapTV(); drawSide();
+}
+function liveRoute(m) { if (!live.map || !live.map.rid) return null; return live.map.rid === 'draft' ? MS.draft : m.routes.find(x => x.id === live.map.rid) || null; }
+function sendMapTV() {
+  if (!tvOpen() || !live.map) return; const m = P.maps.find(x => x.id === live.map.id); if (!m || !MEDIA.get(m.media)) { live.map = null; return; }
+  const r = liveRoute(m);
+  tv.TV.map({ media: mediaFor(m.media), w: m.w, h: m.h, pts: r ? r.pts.map(p => ({ x: p.x, y: p.y })) : [], water: r ? r.ter.map(t => terOf(t)[2] === 0) : [], card: tvCardData(m, r) });
+}
+function updTVRoute() {
+  if (!tvOpen() || !live.map) return; const m = P.maps.find(x => x.id === live.map.id); if (!m) return;
+  const r = liveRoute(m); if (r && r === curRoute(m)) { clearTimeout(updTVRoute.t); updTVRoute.t = setTimeout(() => tv.TV.mapCard(tvCardData(m, r), r.pts.map(p => ({ x: p.x, y: p.y })), r.ter.map(t => terOf(t)[2] === 0)), 250); }
+}
+function mapOffTV() { live.map = null; if (tvOpen()) tv.TV.mapOff(); if (view === 'mapa') drawSide(); else if (view === 'live') renderLive(); }
+addEventListener('resize', () => { if (view === 'mapa' && MS.vp) drawOv(); });
 
 /* =========================================================
    INÍCIO
